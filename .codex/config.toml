@@ -1,0 +1,62 @@
+# Codex project configuration
+# Loaded only when the project is marked "trusted" in your Codex client.
+#
+# This repository is designed for Codex CLI primarily.
+#
+# Profiles are experimental and may change or be removed in future releases.
+# They are not currently supported in the Codex IDE extension.
+#
+# Select a profile when starting Codex:
+#   codex --profile default
+#   codex --profile research
+#   codex --profile deps
+#   codex --profile yolo
+#
+# You can also override any setting for a single run:
+#   codex --config sandbox_workspace_write.network_access=true
+#   codex --config model='"gpt-5.2-codex"'
+#
+# For a fuller workflow guide, see: docs/codex-workflow.md
+
+# Default profile loaded unless overridden by `codex --profile <name>`.
+profile = "default"
+
+# Keep top-level values minimal; profiles carry the real settings.
+sandbox_mode = "workspace-write"
+
+[profiles.default]
+# Offline-first, conservative approvals (recommended for day-to-day work).
+approval_policy = "on-request"
+model = "gpt-5.2-codex"
+web_search = "disabled"
+
+[profiles.default.sandbox_workspace_write]
+network_access = false
+
+[profiles.research]
+# Allows the Web Search tool, but still blocks outbound network access for shell commands.
+approval_policy = "on-request"
+model = "gpt-5.2-codex"
+web_search = "cached"
+
+[profiles.research.sandbox_workspace_write]
+network_access = false
+
+[profiles.deps]
+# For dependency restores / installs (allows outbound network for shell commands).
+# Keep approvals on-request to avoid surprise network activity.
+approval_policy = "on-request"
+model = "gpt-5.2-codex"
+web_search = "live"
+
+[profiles.deps.sandbox_workspace_write]
+network_access = true
+
+[profiles.yolo]
+# YOLO / full-access profile (DANGEROUS).
+# Use only for temporary, supervised runs where you intentionally want zero approvals.
+# This profile can modify arbitrary files and run commands with full access.
+
+approval_policy = "never"  # No approval prompts.
+sandbox_mode = "danger-full-access"  # Full filesystem/process access. Avoid for normal work.
+web_search = "live"  # Enables Web Search and allows live lookups.
